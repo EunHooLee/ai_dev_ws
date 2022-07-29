@@ -88,7 +88,17 @@ class A2Cagent(object):
 
     # Advantage 는 책에서는 따로 계산한다.
     # https://github.com/jk96491/RL_Algorithms/blob/master/Algorithms/Pytorch/A2C/a2c_agent.py
-    def actor_learn(self, stats, actios, advantages):
+    def actor_learn(self, states, actions, advantages):
+        actions = th.FloatTensor(actions).view(states.shape[0], self.action_dim)
+        advantages = th.FloatTensor(advantages).view(states.shape[0], self.action_dim)
+
+        mu, std = self.actor(states, training=True)
+        log_policy_pdf = self.log_pdf(mu, std, actions)
+
+        loss = th.sum(-log_policy_pdf * advantages)
+
+        self.optimizer.zero_grad()
+
     
         
 
