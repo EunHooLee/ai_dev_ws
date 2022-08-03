@@ -30,13 +30,13 @@ class Actor(nn.Module):
         x = self.fc2(x)
         x = self.fc3(x)
 
-        out_mu = self.fc(x)
-        out_std = self.fc(x)
+        out_mu = self.fc4(x)
+        out_std = self.fc5(x)
         # 평균에 action_bound 를 곱하는 이유는 뭐지??
         return out_mu * self.action_bound, out_std
     # log_pdf : object function gradient 식에서 expecttation 내부 log(pi(a|s)) 부분을 sample을 state,action sample을 이용해 estimation 하는 과정
     def log_pdf(self, mu, std, action):
-        std = std.clamp(self.std(self.std_bound[0],self.std_bound[1]))
+        std = std.clamp(self.std_bound[0],self.std_bound[1])
         var = std**2
         log_policy_pdf = -0.5 * (((action-mu)**2)/var + (th.log(var*2*np.pi)))
 

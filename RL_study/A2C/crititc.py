@@ -15,7 +15,7 @@ class Critic(nn.Module):
 
         self.fc1 = nn.Sequential(nn.Linear(self.state_dim,128),nn.ReLU())
         self.fc2 = nn.Sequential(nn.Linear(128,128),nn.ReLU())
-        self.fc3 = nn.Sequential(nn.Linear(128,self.action_dim),nn.ReLU())
+        self.fc3 = nn.Sequential(nn.Linear(128,128),nn.ReLU())
 
         self.fc4 = nn.Sequential(nn.Linear(128,self.action_dim),nn.ReLU())
 
