@@ -56,6 +56,7 @@ class Agent(object):
             state = self.env.reset()
             actor_loss, critic_loss = 0, 0
             # episode 끝이 날때까지 반복
+            # 한 episode 가 끝나는 시점이 언제인지 안나왔음 : done==True 가 되는 시점이 언제인가? (아마 env에 max_ep_length가 지정되 있을 것이라고 추측됨)
             while not done:
                 action = self.actor.get_action(Utils.convertToTensorInput(state,self.state_dim))
                 action = np.clip(action, -self.action_bound, self.action_bound)[0]
@@ -66,7 +67,7 @@ class Agent(object):
                 next_state = np.reshape(next_state,[1, self.state_dim])
                 action = np.reshape(action, [1, self.action_dim])
                 reward = np.reshape(reward, [1,1])
-
+            
                 v_value = self.critic.predict(Utils.convertToTensorInput(state,self.state_dim)).detach().numpy()
                 next_v_value = self.critic.predict(Utils.convertToTensorInput(next_state, self.state_dim)).detach().numpy()
                 # 왜 8 을 더하고 나누지? 뭔가 정규화 하려는거 같은데 ? 
@@ -74,6 +75,8 @@ class Agent(object):
                 advantage, y_i = self.advantage_td_target(train_rewrad, v_value,next_v_value,done)
                 # batch에 저장? 이거 batch 맞나? replay buffer 가 아니라?
                 # RB 는 생각해보면, off-policy일 때 사용하는 거니까 A2C 에서 사용할 수 있지 않나?
+
+                # Answer : batch 가 맞고, A2C 는 on-policy 알고리즘 이기 때문에 Replay Buffer를 이용할 수 없다. 
                 batch_state.append(state)
                 batch_action.append(action)
                 batch_td_target.append(y_i)
@@ -111,6 +114,6 @@ class Agent(object):
         # 다 끝나면 ep reward 저장
         np.savetxt('pendulum_epi_reward.txt', self.save_epi_reward)
     
-    def plot_Result(self):
+    def plot_result(self):
         plt.plot(self.save_epi_reward)
         plt.show()

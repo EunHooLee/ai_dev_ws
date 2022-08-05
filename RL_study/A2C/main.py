@@ -7,10 +7,10 @@ def main():
     env_name = 'Pendulum-v1'
     env = gym.make(env_name)
     agent = Agent(env)
-
+    
     agent.train(max_episode_num) 
     
-    agent.plot_Result()
+    agent.plot_result()
 
 if __name__ == '__main__':
     main()
