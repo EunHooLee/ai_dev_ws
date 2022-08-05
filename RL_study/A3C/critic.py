@@ -1,6 +1,6 @@
 import torch as th
 import torch.nn as nn   
-
+from optimizer import SharedAdam
 
 class Critic(nn.Module):
 
@@ -17,13 +17,14 @@ class Critic(nn.Module):
         
         self.fc4 = nn.Sequential(nn.Linear(16,self.action_dim),nn.ReLU())
 
-        self.optimizer = th.optim.Adam(self.parameters(), lr=self.learning_rate)
+        #self.optimizer = th.optim.Adam(self.parameters(), lr=self.learning_rate)
+        self.optimizer = SharedAdam(self.parameters(), lr=self.learning_rate)
 
     def forward(self,state):
         x = self.fc1(state)
-        x = self.fc2(x)
-        x = self.fc3(x)
-        v = self.fc4(x)
+        x = self.fc2(x.clone())
+        x = self.fc3(x.clone())
+        v = self.fc4(x.clone())
 
         return v
 

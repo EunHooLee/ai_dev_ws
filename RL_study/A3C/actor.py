@@ -2,6 +2,7 @@ import torch as th
 import torch.nn as nn
 
 import numpy as np
+from optimizer import SharedAdam
 
 
 class Actor(nn.Module):
@@ -22,15 +23,16 @@ class Actor(nn.Module):
         self.fc4 = nn.Sequential(nn.Linear(16,self.action_dim),nn.Tanh())
         self.fc5 = nn.Sequential(nn.Linear(16,self.action_dim),nn.Softplus())
 
-        self.optimizer = th.optim.Adam(self.parameters(), lr=self.learning_rate)
+        #self.optimizer = th.optim.Adam(self.parameters(), lr=self.learning_rate)
+        self.optimizer = SharedAdam(self.parameters(), lr=self.learning_rate)
 
     def forward(self,state):
         x = self.fc1(state)
-        x = self.fc2(x)
-        x = self.fc3(x)
+        x = self.fc2(x.clone())
+        x = self.fc3(x.clone())
 
-        out_mu = self.fc4(x)
-        out_std = self.fc5(x)
+        out_mu = self.fc4(x.clone())
+        out_std = self.fc5(x.clone())
 
         return out_mu*self.action_bound, out_std
     

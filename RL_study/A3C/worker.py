@@ -68,7 +68,7 @@ class Worker(threading.Thread):
         return unpack
 
     def run(self):
-        # global global_episode_count, global_step
+        global global_episode_count, global_step
         # global global_episode_reward
 
         print(self.worker_name, " starts ---")
@@ -132,12 +132,12 @@ class Worker(threading.Thread):
                     global_step += 1
                 
                 if done:
-                    glabal_episode_count += 1
+                    global_episode_count += 1
                     print("Worker name: ", self.worker_name,', Episode: ',global_episode_count,', Step: ',step,', Reward: ',episode_reward)
 
                     global_episode_reward.append(episode_reward)
 
-                    if global_episode_reward % 10 == 0:
+                    if global_episode_count % 10 == 0:
                         self.global_actor.save_weights('./pendulum_actor.th')
                         self.global_critic.save_weights('./pendulum_critic.th')
 
