@@ -117,3 +117,7 @@ class Agent(object):
     def plot_result(self):
         plt.plot(self.save_epi_reward)
         plt.show()
+    
+    def save_result_graph(self):
+        plt.plot(self.save_epi_reward)
+        plt.savefig('pendulum_epi_rewward.png')
